@@ -1611,9 +1611,9 @@ function S9_:MakeGui(S91_arg0)
     S230_.Title = S230_.Title or "Slider"
     S230_.Content = S230_.Content or "Content"
     S230_.Increment = S230_.Increment or 1
-    S230_.Min = S230_.Min or 0
-    S230_.Max = S230_.Max or 100
-    S230_.Default = S230_.Default or 50
+    S230_.Min = S230_.Min
+    S230_.Max = S230_.Max
+    S230_.Default = S230_.Default
     S230_.Callback = S230_.Callback or function() end
 
     local S231_ = {
