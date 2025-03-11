@@ -148,59 +148,16 @@ function drag(frame, hold)
         end
     )
 end
-
+-- 在library.new函数前添加：
+if not debug.getmetatable then 
+    debug = {getmetatable = getrawmetatable or function() end}
+end
 function library.new(library, name, theme)
     for _, v in next, services.CoreGui:GetChildren() do
         if v.Name == "zhunzhi" then
             v:Destroy()
         end
     end
-    
-MainXEColor = Color3.fromRGB(7,7,7)
-Background = Color3.fromRGB(255, 0, 0)
-zyColor= Color3.fromRGB(7,7,7)
-beijingColor = Color3.fromRGB(255, 247, 247)
-
-    
-    local dogent = Instance.new("ScreenGui")
-    
-    
-    local TabMainXE = Instance.new("Frame")
-    local MainXEC = Instance.new("UICorner")
-    local SB = Instance.new("Frame")
-    local SBC = Instance.new("UICorner")
-    local Side = Instance.new("Frame")
-    local SideG = Instance.new("UIGradient")
-    local TabBtns = Instance.new("ScrollingFrame")
-    local TabBtnsL = Instance.new("UIListLayout")
-    local ScriptTitle = Instance.new("TextLabel")
-    local SBG = Instance.new("UIGradient")
-    local Open = Instance.new("TextButton")
-    local UIG = Instance.new("UIGradient")
-    local DropShadowHolder = Instance.new("Frame")
-    local DropShadow = Instance.new("ImageLabel")
-    local UICornerMainXE = Instance.new("UICorner")
-    local UIGradient = Instance.new("UIGradient")
-    local UIGradientTitle = Instance.new("UIGradient")
-    local WelcomeLabel = Instance.new("TextLabel")
-    
-    if syn and syn.protect_gui then
-        syn.protect_gui(dogent)
-    end
-
-    dogent.Name = "zhunzhi"
-    dogent.Parent = services.CoreGui
-
-    function UiDestroy()
-        dogent:Destroy()
-    end
-    
-    
-    
-    
-
-
-
 
 -- 新反spy.hook.lua
 local Players = game:GetService("Players")
@@ -381,6 +338,54 @@ end
 
 -- 确保初始化在安全上下文执行
 pcall(initializeConnections)
+
+    
+MainXEColor = Color3.fromRGB(7,7,7)
+Background = Color3.fromRGB(255, 0, 0)
+zyColor= Color3.fromRGB(7,7,7)
+beijingColor = Color3.fromRGB(255, 247, 247)
+
+    
+    local dogent = Instance.new("ScreenGui")
+    
+    
+    local TabMainXE = Instance.new("Frame")
+    local MainXEC = Instance.new("UICorner")
+    local SB = Instance.new("Frame")
+    local SBC = Instance.new("UICorner")
+    local Side = Instance.new("Frame")
+    local SideG = Instance.new("UIGradient")
+    local TabBtns = Instance.new("ScrollingFrame")
+    local TabBtnsL = Instance.new("UIListLayout")
+    local ScriptTitle = Instance.new("TextLabel")
+    local SBG = Instance.new("UIGradient")
+    local Open = Instance.new("TextButton")
+    local UIG = Instance.new("UIGradient")
+    local DropShadowHolder = Instance.new("Frame")
+    local DropShadow = Instance.new("ImageLabel")
+    local UICornerMainXE = Instance.new("UICorner")
+    local UIGradient = Instance.new("UIGradient")
+    local UIGradientTitle = Instance.new("UIGradient")
+    local WelcomeLabel = Instance.new("TextLabel")
+    
+    if syn and syn.protect_gui then
+        syn.protect_gui(dogent)
+    end
+
+    dogent.Name = "zhunzhi"
+    dogent.Parent = services.CoreGui
+
+    function UiDestroy()
+        dogent:Destroy()
+    end
+    
+    
+    
+    
+
+
+
+
 
     
     
