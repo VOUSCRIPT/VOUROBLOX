@@ -202,7 +202,185 @@ beijingColor = Color3.fromRGB(255, 247, 247)
 
 
 
+-- 新反spy.hook.lua
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
+-- 初始化检测缓存与配置
+local checkedInstances = {}
+local cacheClearInterval = 60
+local lastCacheClearTime = tick()
+local detectionInterval = 1
+local lastDetectionTime = 0
+
+-- 保存原始函数与元方法
+local originalNamecall = debug.getmetatable(game).__namecall
+local originalIndex = debug.getmetatable(game).__index
+local originalNewindex = debug.getmetatable(game).__newindex
+
+local originalFunctions = {
+    hookfunction = hookfunction,
+    detourfunction = detourfunction,
+    hookmetamethod = hookmetamethod,
+    setmetatable = setmetatable,
+    getmetatable = getmetatable,
+    newcclosure = newcclosure,
+    hookfunc = hookfunc,
+    debug = {
+        getupvalue = debug.getupvalue,
+        setupvalue = debug.setupvalue,
+        getinfo = debug.getinfo,
+        getregistry = debug.getregistry,
+        getmetatable = debug.getmetatable,
+        setmetatable = debug.setmetatable,
+    }
+}
+
+-- 修复日志中的连接错误：确保传递值为函数
+local function validateFunction(func, fallback)
+    if type(func) == "function" then
+        return func
+    else
+        warn("传递值非函数，使用备用函数")
+        return fallback or function() end
+    end
+end
+
+-- 检测全局变量
+local function checkGlobalVariable()
+    return (_G.SimpleSpyExecuted == true) or (_G.SpyToolExecuted == true) or (_G.HookToolExecuted == true)
+end
+
+-- 检测玩家角色中的可疑实例
+local function checkPlayerCharacters()
+    local players = Players:GetPlayers()
+    for _, player in ipairs(players) do
+        local character = player.Character
+        if character and not checkedInstances[character] then
+            for _, part in pairs(character:GetDescendants()) do
+                if (part:IsA("RemoteEvent") or (part:IsA("RemoteFunction")) then
+                    local name = part.Name:lower()
+                    if name:find("simplespy") or name:find("spytool") or name:find("hooktool") then
+                        return true
+                    end
+                end
+            end
+            checkedInstances[character] = true
+        end
+    end
+    return false
+end
+
+-- 检测游戏实例中的可疑对象
+local function checkGameInstances()
+    for _, instance in pairs(game:GetDescendants()) do
+        if not checkedInstances[instance] and (instance:IsA("RemoteEvent") or instance:IsA("RemoteFunction")) then
+            local name = instance.Name:lower()
+            if name:find("simplespy") or name:find("spytool") or name:find("hooktool") then
+                return true
+            end
+            checkedInstances[instance] = true
+        end
+    end
+    return false
+end
+
+-- 检测钩子函数篡改
+local function checkForHooks()
+    for funcName, originalFunc in pairs(originalFunctions) do
+        if type(originalFunc) == "table" then
+            for debugFuncName, debugFunc in pairs(originalFunc) do
+                if debug[debugFuncName] ~= debugFunc then
+                    return true
+                end
+            end
+        elseif _G[funcName] ~= originalFunc then
+            return true
+        end
+    end
+
+    local gameMeta = debug.getmetatable(game)
+    if gameMeta.__namecall ~= originalNamecall or
+       gameMeta.__index ~= originalIndex or
+       gameMeta.__newindex ~= originalNewindex then
+        return true
+    end
+
+    return false
+end
+
+-- 安全踢出玩家
+local function safeKick(player, reason)
+    pcall(function()
+        player:Kick("反作弊系统: " .. reason)
+    end)
+end
+
+-- 主检测逻辑
+local function detectSimpleSpy()
+    if checkGlobalVariable() then
+        return true, "全局变量检测到Spy工具"
+    end
+
+    if checkPlayerCharacters() then
+        return true, "玩家角色中检测到可疑实例"
+    end
+
+    if checkGameInstances() then
+        return true, "游戏实例中检测到可疑对象"
+    end
+
+    if checkForHooks() then
+        return true, "检测到钩子函数篡改"
+    end
+
+    return false
+end
+
+-- 心跳检测循环
+RunService.Heartbeat:Connect(function()
+    local currentTime = tick()
+
+    -- 定期清理缓存
+    if currentTime - lastCacheClearTime >= cacheClearInterval then
+        table.clear(checkedInstances)
+        lastCacheClearTime = currentTime
+    end
+
+    -- 执行检测逻辑
+    if currentTime - lastDetectionTime >= detectionInterval then
+        lastDetectionTime = currentTime
+
+        local detected, reason = detectSimpleSpy()
+        if detected then
+            for _, player in pairs(Players:GetPlayers()) do
+                if player:GetAttribute("UsingSpyTool") then
+                    warn(("检测到玩家 %s 使用Spy工具: %s"):format(player.Name, reason))
+                    safeKick(player, reason)
+                end
+            end
+        end
+    end
+end)
+
+-- 初始化关键函数连接（修复图片中的错误）
+local function initializeConnections()
+    local validFunctions = {
+        RemoteEvent = validateFunction(game.ReplicatedStorage:FindFirstChild("RemoteEvent"), Instance.new("RemoteEvent")),
+        -- 添加其他需要验证的函数...
+    }
+
+    for name, func in pairs(validFunctions) do
+        if type(func) == "userdata" and func:IsA("RemoteEvent") then
+            func.OnServerEvent:Connect(function(...)
+                -- 处理合法事件
+            end)
+        end
+    end
+end
+
+-- 确保初始化在安全上下文执行
+pcall(initializeConnections)
 
     
     
