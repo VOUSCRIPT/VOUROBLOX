@@ -1,165 +1,5 @@
 --首创小云
     --霖溺魔改雲的ui魔改 续创霖溺 这是续创ui[会持续更新]
-repeat
-    task.wait()
-until game:IsLoaded()
-local library = {}
-local ToggleUI = false
-library.currentTab = nil
-library.flags = {}
-
-
-local services =
-    setmetatable(
-    {},
-    {
-        __index = function(t, k)
-            return game.GetService(game, k)
-        end
-    }
-)
-
-local mouse = services.Players.LocalPlayer:GetMouse()
-
-local function createTween(obj, duration, easingStyle, easingDirection, properties)
-    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle[easingStyle], Enum.EasingDirection[easingDirection])
-    local tween = services.TweenService:Create(obj, tweenInfo, properties)
-    tween:Play()
-    return tween
-end
-
-function Tween(obj, t, data)
-    return createTween(obj, t[1], t[2], t[3], data)
-end
-
-local function createRipple(obj)
-    if obj.ClipsDescendants ~= true then
-        obj.ClipsDescendants = true
-    end
-    local Ripple = Instance.new("ImageLabel")
-    Ripple.Name = "Ripple"
-    Ripple.Parent = obj
-    Ripple.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Ripple.BackgroundTransparency = 1.000
-    Ripple.ZIndex = 8
-    Ripple.Image = "rbxassetid://2708891598"
-    Ripple.ImageTransparency = 0.800
-    Ripple.ScaleType = Enum.ScaleType.Fit
-    Ripple.ImageColor3 = Color3.fromRGB(255, 255, 255)
-    Ripple.Position = UDim2.new((mouse.X - Ripple.AbsolutePosition.X) / obj.AbsoluteSize.X, 0, (mouse.Y - Ripple.AbsolutePosition.Y) / obj.AbsoluteSize.Y, 0)
-    return Ripple
-end
-
-function Ripple(obj)
-    spawn(function()
-        local ripple = createRipple(obj)
-        Tween(ripple, {.3, "Linear", "InOut"}, {Position = UDim2.new(-5.5, 0, -5.5, 0), Size = UDim2.new(12, 0, 12, 0)})
-        Tween(obj, {0.1, "Sine", "InOut"}, {Size = UDim2.new(1.1, 0, 1.1, 0)})
-        wait(0.15)
-        Tween(ripple, {.3, "Linear", "InOut"}, {ImageTransparency = 1})
-        Tween(obj, {0.1, "Sine", "InOut"}, {Size = UDim2.new(1, 0, 1, 0)})
-        wait(.3)
-        ripple:Destroy()
-    end)
-end
-
-local toggled = false
-
-local switchingTabs = false
-local function tweenTabElement(element, transparency)
-    services.TweenService:Create(element, TweenInfo.new(0.1), {ImageTransparency = transparency}):Play()
-    services.TweenService:Create(element.TabText, TweenInfo.new(0.1), {TextTransparency = transparency}):Play()
-end
-
-function switchTab(new)
-    if switchingTabs then
-        return
-    end
-    local old = library.currentTab
-    if old == nil then
-        new[2].Visible = true
-        library.currentTab = new
-        tweenTabElement(new[1], 0)
-        return
-    end
-
-    if old[1] == new[1] then
-        return
-    end
-    switchingTabs = true
-    library.currentTab = new
-
-    tweenTabElement(old[1], 0.2)
-    tweenTabElement(new[1], 0)
-
-    old[2].Visible = false
-    new[2].Visible = true
-
-    task.wait(0.1)
-    switchingTabs = false
-end
-
-function drag(frame, hold)
-    if not hold then
-        hold = frame
-    end
-    local dragging
-    local dragInput
-    local dragStart
-    local startPos
-
-    local function update(input)
-        local delta = input.Position - dragStart
-        frame.Position =
-            UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-
-    hold.InputBegan:Connect(
-        function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                dragging = true
-                dragStart = input.Position
-                startPos = frame.Position
-
-                input.Changed:Connect(
-                    function()
-                        if input.UserInputState == Enum.UserInputState.End then
-                            dragging = false
-                        end
-                    end
-                )
-            end
-        end
-    )
-
-    frame.InputChanged:Connect(
-        function(input)
-            if input.UserInputType == Enum.UserInputType.MouseMovement then
-                dragInput = input
-            end
-        end
-    )
-
-    services.UserInputService.InputChanged:Connect(
-        function(input)
-            if input == dragInput and dragging then
-                update(input)
-            end
-        end
-    )
-end
--- 在library.new函数前添加：
-if not debug.getmetatable then 
-    debug = {getmetatable = getrawmetatable or function() end}
-end
-function library.new(library, name, theme)
-    for _, v in next, services.CoreGui:GetChildren() do
-        if v.Name == "zhunzhi" then
-            v:Destroy()
-        end
-    end
-
--- 新反spy.hook.lua
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
@@ -336,8 +176,162 @@ local function initializeConnections()
     end
 end
 
--- 确保初始化在安全上下文执行
-pcall(initializeConnections)
+repeat
+    task.wait()
+until game:IsLoaded()
+local library = {}
+local ToggleUI = false
+library.currentTab = nil
+library.flags = {}
+
+
+local services =
+    setmetatable(
+    {},
+    {
+        __index = function(t, k)
+            return game.GetService(game, k)
+        end
+    }
+)
+
+local mouse = services.Players.LocalPlayer:GetMouse()
+
+local function createTween(obj, duration, easingStyle, easingDirection, properties)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle[easingStyle], Enum.EasingDirection[easingDirection])
+    local tween = services.TweenService:Create(obj, tweenInfo, properties)
+    tween:Play()
+    return tween
+end
+
+function Tween(obj, t, data)
+    return createTween(obj, t[1], t[2], t[3], data)
+end
+
+local function createRipple(obj)
+    if obj.ClipsDescendants ~= true then
+        obj.ClipsDescendants = true
+    end
+    local Ripple = Instance.new("ImageLabel")
+    Ripple.Name = "Ripple"
+    Ripple.Parent = obj
+    Ripple.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Ripple.BackgroundTransparency = 1.000
+    Ripple.ZIndex = 8
+    Ripple.Image = "rbxassetid://2708891598"
+    Ripple.ImageTransparency = 0.800
+    Ripple.ScaleType = Enum.ScaleType.Fit
+    Ripple.ImageColor3 = Color3.fromRGB(255, 255, 255)
+    Ripple.Position = UDim2.new((mouse.X - Ripple.AbsolutePosition.X) / obj.AbsoluteSize.X, 0, (mouse.Y - Ripple.AbsolutePosition.Y) / obj.AbsoluteSize.Y, 0)
+    return Ripple
+end
+
+function Ripple(obj)
+    spawn(function()
+        local ripple = createRipple(obj)
+        Tween(ripple, {.3, "Linear", "InOut"}, {Position = UDim2.new(-5.5, 0, -5.5, 0), Size = UDim2.new(12, 0, 12, 0)})
+        Tween(obj, {0.1, "Sine", "InOut"}, {Size = UDim2.new(1.1, 0, 1.1, 0)})
+        wait(0.15)
+        Tween(ripple, {.3, "Linear", "InOut"}, {ImageTransparency = 1})
+        Tween(obj, {0.1, "Sine", "InOut"}, {Size = UDim2.new(1, 0, 1, 0)})
+        wait(.3)
+        ripple:Destroy()
+    end)
+end
+
+local toggled = false
+
+local switchingTabs = false
+local function tweenTabElement(element, transparency)
+    services.TweenService:Create(element, TweenInfo.new(0.1), {ImageTransparency = transparency}):Play()
+    services.TweenService:Create(element.TabText, TweenInfo.new(0.1), {TextTransparency = transparency}):Play()
+end
+
+function switchTab(new)
+    if switchingTabs then
+        return
+    end
+    local old = library.currentTab
+    if old == nil then
+        new[2].Visible = true
+        library.currentTab = new
+        tweenTabElement(new[1], 0)
+        return
+    end
+
+    if old[1] == new[1] then
+        return
+    end
+    switchingTabs = true
+    library.currentTab = new
+
+    tweenTabElement(old[1], 0.2)
+    tweenTabElement(new[1], 0)
+
+    old[2].Visible = false
+    new[2].Visible = true
+
+    task.wait(0.1)
+    switchingTabs = false
+end
+
+function drag(frame, hold)
+    if not hold then
+        hold = frame
+    end
+    local dragging
+    local dragInput
+    local dragStart
+    local startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position =
+            UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    hold.InputBegan:Connect(
+        function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = true
+                dragStart = input.Position
+                startPos = frame.Position
+
+                input.Changed:Connect(
+                    function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            dragging = false
+                        end
+                    end
+                )
+            end
+        end
+    )
+
+    frame.InputChanged:Connect(
+        function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+                dragInput = input
+            end
+        end
+    )
+
+    services.UserInputService.InputChanged:Connect(
+        function(input)
+            if input == dragInput and dragging then
+                update(input)
+            end
+        end
+    )
+end
+function library.new(library, name, theme)
+    for _, v in next, services.CoreGui:GetChildren() do
+        if v.Name == "zhunzhi" then
+            v:Destroy()
+        end
+    end
+
+
 
     
 MainXEColor = Color3.fromRGB(7,7,7)
@@ -2051,4 +2045,9 @@ end
 
 
 
+
 return library
+
+
+    -- 确保初始化在安全上下文执行
+pcall(initializeConnections)
