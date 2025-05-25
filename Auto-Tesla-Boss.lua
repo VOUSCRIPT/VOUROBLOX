@@ -1,7 +1,6 @@
 local player = game.Players.LocalPlayer
 local teleportEnabled = false
 
--- Tạo GUI
 local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 screenGui.Name = "TeslaPromptGui"
 screenGui.ResetOnSpawn = false
@@ -13,12 +12,11 @@ frame.Size = UDim2.new(0, 300, 0, 150)
 frame.BackgroundTransparency = 0.5
 frame.BackgroundColor3 = Color3.new(0, 0, 0)
 
--- Bo góc cho Frame
 local frameCorner = Instance.new("UICorner", frame)
 frameCorner.CornerRadius = UDim.new(0, 12)
 
 local question = Instance.new("TextLabel", frame)
-question.Text = "Do you want to teleport to Tesla Lab?"
+question.Text = "你想传送到特斯拉实验室吗？?"
 question.Size = UDim2.new(1, 0, 0.5, 0)
 question.BackgroundTransparency = 1
 question.TextColor3 = Color3.new(1, 1, 1)
@@ -31,16 +29,14 @@ yesButton.Text = "Yes"
 yesButton.Position = UDim2.new(0.1, 0, 0.6, 0)
 yesButton.Size = UDim2.new(0.35, 0, 0.3, 0)
 yesButton.BackgroundTransparency = 0.5
-yesButton.BackgroundColor3 = Color3.new(0, 1, 0) -- vẫn dùng xanh để dễ phân biệt
+yesButton.BackgroundColor3 = Color3.new(0, 1, 0) 
 yesButton.TextColor3 = Color3.new(0, 0, 0)
 yesButton.Font = Enum.Font.SourceSansBold
 yesButton.TextSize = 18
 
--- Bo góc cho nút Yes
 local yesCorner = Instance.new("UICorner", yesButton)
 yesCorner.CornerRadius = UDim.new(0, 8)
 
--- NO Button
 local noButton = Instance.new("TextButton", frame)
 noButton.Text = "No"
 noButton.Position = UDim2.new(0.55, 0, 0.6, 0)
@@ -95,7 +91,7 @@ yesButton.MouseButton1Click:Connect(function()
 
         local noclipConnection = runService.Stepped:Connect(enableNoClip)
 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Shade-vex/bruh/refs/heads/main/Auto-collect-gun.lua.txt"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/VOUSCRIPT/VOUROBLOX/refs/heads/main/%E4%BC%A0%E9%80%81.lua"))()
 
         task.delay(60, function()
             noclipConnection:Disconnect()
@@ -135,7 +131,7 @@ noButton.MouseButton1Click:Connect(function()
 
         local noclipConnection = runService.Stepped:Connect(enableNoClip)
 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Shade-vex/bruh/refs/heads/main/Auto-collect-gun.lua.txt"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/VOUSCRIPT/VOUROBLOX/refs/heads/main/Auto-collect-gun.lua"))()
 
         task.delay(60, function()
             noclipConnection:Disconnect()
